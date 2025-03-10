@@ -1062,7 +1062,7 @@ class CUDAKernel {
       if (pos == std::string::npos) break;
       size_t end = _ptx.find(";", pos);
       std::string line = _ptx.substr(pos, end - pos);
-      size_t constant_start = line.find_last_of(" ") + 1;
+      size_t constant_start = line.find_last_of(' ') + 1;
       size_t constant_end = line.find_last_of("[");
       std::string entry =
           line.substr(constant_start, constant_end - constant_start);
