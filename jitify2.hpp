@@ -2306,7 +2306,8 @@ inline LinkedProgram LinkedProgram::link_impl(
     const CUjitInputType program_types[], StringMap lowered_name_map,
     StringVec options) {
   std::string error, log, linked_cubin;
-  log = detail::string_join(options, " ", "Linker options: \"", "\"\n");
+  auto const space = std::string{" "};
+  log = detail::string_join(options, space, "Linker options: \"", "\"\n");
   if (!detail::link_programs(num_programs, programs, program_types, options,
                              &error, &log, &linked_cubin)) {
     return Error("Linking failed: " + error + '\n' + log);
@@ -3110,8 +3111,9 @@ inline CompiledProgram CompiledProgram::compile(
   if (!detail::compile_program(name, source, header_sources, compiler_options,
                                &error, &log, &ptx, &cubin, &nvvm,
                                name_expressions, &lowered_name_map)) {
+    auto const space = std::string{" "};
     std::string options_str = detail::string_join(
-        compiler_options, " ", "Compiler options: \"", "\"\n");
+        compiler_options, space, "Compiler options: \"", "\"\n");
     std::vector<std::string> header_names;
     header_names.reserve(header_sources.size());
     for (const auto& item : header_sources) {
@@ -5291,8 +5293,9 @@ inline PreprocessedProgram PreprocessedProgram::preprocess(
       compiler_options.push_back(static_cast<std::string>(arch_flag));
     }
 
+    auto const space = std::string{" "};
     std::string compiler_options_msg = detail::string_join(
-        compiler_options, " ", "Compiler options: \"", "\"\n");
+        compiler_options, space, "Compiler options: \"", "\"\n");
     std::string compile_error;
     while (!detail::compile_program(name, source, header_sources,
                                     compiler_options, &compile_error,

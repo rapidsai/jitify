@@ -496,8 +496,9 @@ inline std::string comment_out_code_line(int line_num, std::string source) {
 inline void print_with_line_numbers(std::string const& source) {
   int linenum = 1;
   std::stringstream source_ss(source);
+  auto const space = std::string{" "};
   for (std::string line; std::getline(source_ss, line); ++linenum) {
-    std::cout << std::setfill(' ') << std::setw(3) << linenum << " " << line
+    std::cout << std::setfill(' ') << std::setw(3) << linenum << space << line
               << std::endl;
   }
 }
@@ -672,8 +673,9 @@ inline bool load_source(
           split_string(line_after_pragma, 2);
       line =
           (line.substr(0, pragma_beg) + "_Pragma(\"" + pragma_split[1] + "\")");
+      auto const space = std::string{" "};
       if (pragma_split.size() == 3) {
-        line += " " + pragma_split[2];
+        line += space + pragma_split[2];
       }
     }
 
@@ -2826,8 +2828,9 @@ inline void load_program(std::string const& cuda_source,
 #if JITIFY_PRINT_LOG
     if (ret == NVRTC_ERROR_INVALID_OPTION) {
       std::cout << "Compiler options: ";
+      auto const space = std::string{" "};
       for (int i = 0; i < (int)compiler_options.size(); ++i) {
-        std::cout << compiler_options[i] << " ";
+        std::cout << compiler_options[i] << space;
       }
       std::cout << std::endl;
     }
@@ -3644,8 +3647,9 @@ class Capture {
       : _arg_ptrs{(void*)&args...} {
     std::vector<std::string> arg_types = {reflection::reflect<Args>()...};
     _arg_decls.resize(arg_names.size());
+    auto const space = std::string{" "};
     for (int i = 0; i < (int)arg_names.size(); ++i) {
-      _arg_decls[i] = arg_types[i] + " " + arg_names[i];
+      _arg_decls[i] = arg_types[i] + space + arg_names[i];
     }
   }
 };
