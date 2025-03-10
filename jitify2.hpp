@@ -2802,7 +2802,7 @@ inline void find_lowered_global_variables(StringRef ptx,
     if (ptx[end] == '=') --end;
     StringRef line = ptx.substr(pos, end - pos);
     pos = end;
-    size_t symbol_start = line.find_last_of(" ") + 1;
+    size_t symbol_start = line.find_last_of(' ') + 1;
     size_t symbol_end = line.find_last_of("[");
     std::string entry(line.substr(symbol_start, symbol_end - symbol_start));
     std::string key = demangle_ptx_variable_name(entry.c_str());

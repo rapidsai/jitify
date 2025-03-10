@@ -1220,7 +1220,7 @@ class CUDAKernel {
       if (_ptx[end] == '=') --end;
       std::string line = _ptx.substr(pos, end - pos);
       pos = end;
-      size_t symbol_start = line.find_last_of(" ") + 1;
+      size_t symbol_start = line.find_last_of(' ') + 1;
       size_t symbol_end = line.find_last_of("[");
       std::string entry = line.substr(symbol_start, symbol_end - symbol_start);
       std::string key = detail::demangle_ptx_variable_name(entry.c_str());
