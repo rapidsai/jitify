@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2020, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2017-2025, NVIDIA CORPORATION. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -450,20 +450,20 @@ inline bool extract_include_info_from_compile_error(std::string log,
     size_t beg = log.find(p);
     if (beg != std::string::npos) {
       beg += p.size();
-      size_t end = log.find("\"", beg);
+      size_t end = log.find('\"', beg);
       name = log.substr(beg, end - beg);
 
-      size_t line_beg = log.rfind("\n", beg);
+      size_t line_beg = log.rfind('\n', beg);
       if (line_beg == std::string::npos) {
         line_beg = 0;
       } else {
         line_beg += 1;
       }
 
-      size_t split = log.find("(", line_beg);
+      size_t split = log.find('(', line_beg);
       parent = log.substr(line_beg, split - line_beg);
       line_num =
-          atoi(log.substr(split + 1, log.find(")", split + 1) - (split + 1))
+          atoi(log.substr(split + 1, log.find(')', split + 1) - (split + 1))
                    .c_str());
 
       return true;
@@ -478,7 +478,7 @@ inline bool is_include_directive_with_quotes(const std::string& source,
   // TODO: Check each find() for failure.
   size_t beg = 0;
   for (int i = 1; i < line_num; ++i) {
-    beg = source.find("\n", beg) + 1;
+    beg = source.find('\n', beg) + 1;
   }
   beg = source.find("include", beg) + 7;
   beg = source.find_first_of("\"<", beg);
@@ -488,7 +488,7 @@ inline bool is_include_directive_with_quotes(const std::string& source,
 inline std::string comment_out_code_line(int line_num, std::string source) {
   size_t beg = 0;
   for (int i = 1; i < line_num; ++i) {
-    beg = source.find("\n", beg) + 1;
+    beg = source.find('\n', beg) + 1;
   }
   return (source.substr(0, beg) + "//" + source.substr(beg));
 }
@@ -496,9 +496,8 @@ inline std::string comment_out_code_line(int line_num, std::string source) {
 inline void print_with_line_numbers(std::string const& source) {
   int linenum = 1;
   std::stringstream source_ss(source);
-  auto const space = std::string{" "};
   for (std::string line; std::getline(source_ss, line); ++linenum) {
-    std::cout << std::setfill(' ') << std::setw(3) << linenum << space << line
+    std::cout << std::setfill(' ') << std::setw(3) << linenum << " " << line
               << std::endl;
   }
 }
@@ -562,7 +561,7 @@ inline bool load_source(
   std::stringstream string_stream;
   std::ifstream file_stream;
   // First detect direct source-code string ("my_program\nprogram_code...")
-  size_t newline_pos = filename.find("\n");
+  size_t newline_pos = filename.find('\n');
   if (newline_pos != std::string::npos) {
     std::string source = filename.substr(newline_pos + 1);
     filename = filename.substr(0, newline_pos);
@@ -673,9 +672,8 @@ inline bool load_source(
           split_string(line_after_pragma, 2);
       line =
           (line.substr(0, pragma_beg) + "_Pragma(\"" + pragma_split[1] + "\")");
-      auto const space = std::string{" "};
       if (pragma_split.size() == 3) {
-        line += space + pragma_split[2];
+        line += " " + pragma_split[2];
       }
     }
 
@@ -1223,7 +1221,7 @@ class CUDAKernel {
       std::string line = _ptx.substr(pos, end - pos);
       pos = end;
       size_t symbol_start = line.find_last_of(' ') + 1;
-      size_t symbol_end = line.find_last_of("[");
+      size_t symbol_end = line.find_last_of('[');
       std::string entry = line.substr(symbol_start, symbol_end - symbol_start);
       std::string key = detail::demangle_ptx_variable_name(entry.c_str());
       // Skip unsupported mangled names. E.g., a static variable defined inside
@@ -2687,7 +2685,7 @@ inline nvrtcResult compile_kernel(std::string program_name,
     // Extract mangled kernel template instantiation from PTX
     inst_dummy += " = ";  // Note: This must match how the PTX is generated
     int mi_beg = ptx->find(inst_dummy) + inst_dummy.size();
-    int mi_end = ptx->find(";", mi_beg);
+    int mi_end = ptx->find(';', mi_beg);
     *mangled_instantiation = ptx->substr(mi_beg, mi_end - mi_beg);
 #endif
   }
@@ -2828,9 +2826,8 @@ inline void load_program(std::string const& cuda_source,
 #if JITIFY_PRINT_LOG
     if (ret == NVRTC_ERROR_INVALID_OPTION) {
       std::cout << "Compiler options: ";
-      auto const space = std::string{" "};
       for (int i = 0; i < (int)compiler_options.size(); ++i) {
-        std::cout << compiler_options[i] << space;
+        std::cout << compiler_options[i] << " ";
       }
       std::cout << std::endl;
     }
@@ -3647,9 +3644,8 @@ class Capture {
       : _arg_ptrs{(void*)&args...} {
     std::vector<std::string> arg_types = {reflection::reflect<Args>()...};
     _arg_decls.resize(arg_names.size());
-    auto const space = std::string{" "};
     for (int i = 0; i < (int)arg_names.size(); ++i) {
-      _arg_decls[i] = arg_types[i] + space + arg_names[i];
+      _arg_decls[i] = arg_types[i] + " " + arg_names[i];
     }
   }
 };
@@ -3750,7 +3746,7 @@ CUresult parallel_for(ExecutionPolicy policy, IndexType begin, IndexType end,
   std::stringstream source_ss;
   source_ss << "parallel_for_program\n";
   for (auto const& header : policy.headers) {
-    std::string header_name = header.substr(0, header.find("\n"));
+    std::string header_name = header.substr(0, header.find('\n'));
     source_ss << "#include <" << header_name << ">\n";
   }
   source_ss << "template<typename I>\n"

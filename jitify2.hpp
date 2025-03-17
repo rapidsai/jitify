@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2020, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2017-2025, NVIDIA CORPORATION. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2306,8 +2306,7 @@ inline LinkedProgram LinkedProgram::link_impl(
     const CUjitInputType program_types[], StringMap lowered_name_map,
     StringVec options) {
   std::string error, log, linked_cubin;
-  auto const space = std::string{" "};
-  log = detail::string_join(options, space, "Linker options: \"", "\"\n");
+  log = detail::string_join(options, " ", "Linker options: \"", "\"\n");
   if (!detail::link_programs(num_programs, programs, program_types, options,
                              &error, &log, &linked_cubin)) {
     return Error("Linking failed: " + error + '\n' + log);
@@ -2467,7 +2466,7 @@ inline int parse_arch_flag(const StringVec& options, bool* is_virtual,
     } else {
       continue;
     }
-    size_t eql_beg = option.find("=", key_end);
+    size_t eql_beg = option.find('=', key_end);
     StringSlice value;
     bool found_eql = eql_beg != std::string::npos;
     if (found_eql) {
@@ -2804,7 +2803,7 @@ inline void find_lowered_global_variables(StringRef ptx,
     StringRef line = ptx.substr(pos, end - pos);
     pos = end;
     size_t symbol_start = line.find_last_of(' ') + 1;
-    size_t symbol_end = line.find_last_of("[");
+    size_t symbol_end = line.find_last_of('[');
     std::string entry(line.substr(symbol_start, symbol_end - symbol_start));
     std::string key = demangle_ptx_variable_name(entry.c_str());
     // Skip unsupported mangled names. E.g., a static variable defined inside
@@ -3111,9 +3110,8 @@ inline CompiledProgram CompiledProgram::compile(
   if (!detail::compile_program(name, source, header_sources, compiler_options,
                                &error, &log, &ptx, &cubin, &nvvm,
                                name_expressions, &lowered_name_map)) {
-    auto const space = std::string{" "};
     std::string options_str = detail::string_join(
-        compiler_options, space, "Compiler options: \"", "\"\n");
+        compiler_options, " ", "Compiler options: \"", "\"\n");
     std::vector<std::string> header_names;
     header_names.reserve(header_sources.size());
     for (const auto& item : header_sources) {
@@ -4637,20 +4635,20 @@ inline bool extract_include_info_from_compile_error(const std::string& log,
     size_t beg = log.find(p);
     if (beg != std::string::npos) {
       beg += p.size();
-      size_t end = log.find("\"", beg);
+      size_t end = log.find('\"', beg);
       *name = log.substr(beg, end - beg);
 
-      size_t line_beg = log.rfind("\n", beg);
+      size_t line_beg = log.rfind('\n', beg);
       if (line_beg == std::string::npos) {
         line_beg = 0;
       } else {
         line_beg += 1;
       }
 
-      size_t split = log.find("(", line_beg);
+      size_t split = log.find('(', line_beg);
       *parent = log.substr(line_beg, split - line_beg);
       *line_num = std::atoi(
-          log.substr(split + 1, log.find(")", split + 1) - (split + 1))
+          log.substr(split + 1, log.find(')', split + 1) - (split + 1))
               .c_str());
 
       return true;
@@ -4688,7 +4686,7 @@ inline size_t find_source_line(StringRef source, int line_num) {
       int num = std::atoi(
           std::string(source.substr(num_beg, num_end - num_beg)).c_str());
       i = num - 1;
-      beg = source.find_first_of("\n", beg);
+      beg = source.find_first_of('\n', beg);
       if (beg == std::string::npos) return beg;
     } else if (source[beg] == '#') {
       // This was just some other # token, don't count it as a new line.
@@ -5293,9 +5291,8 @@ inline PreprocessedProgram PreprocessedProgram::preprocess(
       compiler_options.push_back(static_cast<std::string>(arch_flag));
     }
 
-    auto const space = std::string{" "};
     std::string compiler_options_msg = detail::string_join(
-        compiler_options, space, "Compiler options: \"", "\"\n");
+        compiler_options, " ", "Compiler options: \"", "\"\n");
     std::string compile_error;
     while (!detail::compile_program(name, source, header_sources,
                                     compiler_options, &compile_error,
