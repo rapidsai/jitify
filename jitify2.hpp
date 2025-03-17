@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2020, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2017-2025, NVIDIA CORPORATION. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2466,7 +2466,7 @@ inline int parse_arch_flag(const StringVec& options, bool* is_virtual,
     } else {
       continue;
     }
-    size_t eql_beg = option.find("=", key_end);
+    size_t eql_beg = option.find('=', key_end);
     StringSlice value;
     bool found_eql = eql_beg != std::string::npos;
     if (found_eql) {
@@ -2802,8 +2802,8 @@ inline void find_lowered_global_variables(StringRef ptx,
     if (ptx[end] == '=') --end;
     StringRef line = ptx.substr(pos, end - pos);
     pos = end;
-    size_t symbol_start = line.find_last_of(" ") + 1;
-    size_t symbol_end = line.find_last_of("[");
+    size_t symbol_start = line.find_last_of(' ') + 1;
+    size_t symbol_end = line.find_last_of('[');
     std::string entry(line.substr(symbol_start, symbol_end - symbol_start));
     std::string key = demangle_ptx_variable_name(entry.c_str());
     // Skip unsupported mangled names. E.g., a static variable defined inside
@@ -4635,20 +4635,20 @@ inline bool extract_include_info_from_compile_error(const std::string& log,
     size_t beg = log.find(p);
     if (beg != std::string::npos) {
       beg += p.size();
-      size_t end = log.find("\"", beg);
+      size_t end = log.find('\"', beg);
       *name = log.substr(beg, end - beg);
 
-      size_t line_beg = log.rfind("\n", beg);
+      size_t line_beg = log.rfind('\n', beg);
       if (line_beg == std::string::npos) {
         line_beg = 0;
       } else {
         line_beg += 1;
       }
 
-      size_t split = log.find("(", line_beg);
+      size_t split = log.find('(', line_beg);
       *parent = log.substr(line_beg, split - line_beg);
       *line_num = std::atoi(
-          log.substr(split + 1, log.find(")", split + 1) - (split + 1))
+          log.substr(split + 1, log.find(')', split + 1) - (split + 1))
               .c_str());
 
       return true;
@@ -4686,7 +4686,7 @@ inline size_t find_source_line(StringRef source, int line_num) {
       int num = std::atoi(
           std::string(source.substr(num_beg, num_end - num_beg)).c_str());
       i = num - 1;
-      beg = source.find_first_of("\n", beg);
+      beg = source.find_first_of('\n', beg);
       if (beg == std::string::npos) return beg;
     } else if (source[beg] == '#') {
       // This was just some other # token, don't count it as a new line.
